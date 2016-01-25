@@ -17,10 +17,9 @@ if (buildDebugFile.canRead()) {
     debugProperties.load(new FileInputStream(buildDebugFile))
     if (!debugProperties.containsKey('GOOGLE_MAPS_API_KEY') || debugProperties.getProperty('GOOGLE_MAPS_API_KEY').equals("")) {
         println 'missing GOOGLE_MAPS_API_KEY in build_debug.properties'
-        throw InvalidUserDataException("property GOOGLE_MAPS_API_KEY missing in build_debug.properties")
     }
 } else {
-    throw InvalidUserDataException("could not read build_debug.properties")
+    println "could not read build_debug.properties"
 }
 
 
@@ -32,8 +31,8 @@ android {
         applicationId "se.subsurface.flagit"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 17
-        versionName "0.0.17"
+        versionCode 18
+        versionName "0.0.18"
     }
 
     signingConfigs {

@@ -1,5 +1,5 @@
 <img src="https://cloud.githubusercontent.com/assets/2734652/12547298/e0d3e8d6-c34f-11e5-8e71-00cceaa37b1a.png"/>
-# citynator
+# Citynator
 Citynator is a game where the player should locate the city on google maps before the time runs out. The game is non-profit and can be downloaded from <a href="https://play.google.com/store/apps/details?id=se.subsurface.flagit">google play<a/>
 # Used Licenses
 Citynator uses (also mentioned inside the app)

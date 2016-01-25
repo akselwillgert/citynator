@@ -17,9 +17,12 @@
 #}
 -keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault, InnerClasses
 
--keep public class se.subsurface.flagit.** {
+-keep public class se.subsurface.citynator.** {
   public protected private *;
   *;
+}
+-keepclassmembers class ** {
+    public void onEvent*(***);
 }
 -keepattributes SourceFile,LineNumberTable
 -keep class de.psdev.licensesdialog.** { *; }
