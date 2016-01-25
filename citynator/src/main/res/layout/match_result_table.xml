@@ -1,0 +1,12 @@
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/round_results"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:shrinkColumns="0"
+    android:stretchColumns="1,2">
+
+    <include layout="@layout/match_result_table_header" />
+
+</TableLayout>

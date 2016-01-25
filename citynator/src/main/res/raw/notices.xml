@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<notices>
+    <notice>
+        <name>Geonames database</name>
+        <url>http://www.geonames.org/</url>
+        <copyright>Geonames
+        </copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+        <!-- http://creativecommons.org/licenses/by/3.0/ -->
+    </notice>
+    <notice>
+        <name>Leonids</name>
+        <url>https://github.com/plattysoft/Leonids</url>
+        <copyright>plattysoft
+        </copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>EventBus</name>
+        <url>https://github.com/greenrobot/EventBus</url>
+        <copyright>greenrobot
+        </copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>SqlLiteAssetHelper</name>
+        <url>https://github.com/jgilfelt/android-sqlite-asset-helper</url>
+        <copyright>Jeff Gilfelt
+        </copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Universal Image Loader</name>
+        <url>https://github.com/nostra13/Android-Universal-Image-Loader</url>
+        <copyright>Nostra13
+        </copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>Orthographic map of Latin America</name>
+        <url>https://commons.wikimedia.org/wiki/File:Latin_America_(orthographic_projection).svg</url>
+        <copyright>Heraldry
+        </copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+    <notice>
+        <name>Orthographic map of Oceania</name>
+        <url>
+            https://commons.wikimedia.org/wiki/File:Oceania_(orthographic_projection).svg
+        </url>
+        <copyright>Ch1902</copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+    <notice>
+        <name>Orthographic map of Asia</name>
+        <url>
+            https://commons.wikimedia.org/wiki/File:Asia_(orthographic_projection).svg
+        </url>
+        <copyright>Koyos + Ssolbergj</copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+    <notice>
+        <name>Orthographic map of Europe</name>
+        <url>
+            https://commons.wikimedia.org/wiki/File:Europe_(orthographic_projection).svg
+        </url>
+        <copyright>Ssolbergj</copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+    <notice>
+        <name>Orthographic map of Africa</name>
+        <url>
+            https://commons.wikimedia.org/wiki/File:Africa_(orthographic_projection).svg
+        </url>
+        <copyright>Martin23230</copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+    <notice>
+        <name>Orthographic map of Northern America</name>
+        <url>
+            https://commons.wikimedia.org/wiki/File:Northern_America_(orthographic_projection).svg
+        </url>
+        <copyright>Keepscases</copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+    <notice>
+        <name>Flags</name>
+        <url>www.IconDrawer.com</url>
+        <copyright>www.IconDrawer.com
+        </copyright>
+        <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
+    </notice>
+
+    https://commons.wikimedia.org/wiki/File:Europe_(orthographic_projection).svg <!-- Ssolbergj -->
+    https://commons.wikimedia.org/wiki/File:Oceania_(orthographic_projection).svg <!--Creative Commons Attribution-Share Alike 3.0 Unported -->
+    https://commons.wikimedia.org/wiki/File:Latin_America_(orthographic_projection).svg <!--Heraldry -->  Creative Commons Attribution-Share Alike 3.0 Unported
+    https://commons.wikimedia.org/wiki/File:Northern_America_(orthographic_projection).svg
+    https://commons.wikimedia.org/wiki/File:Asia_(orthographic_projection).svg <!--//Koyos + Ssolbergj (talk) Creative Commons Attribution-Share Alike 4.0 International, 3.0 Unported, 2.5 Generic, 2.0 Generic and 1.0 Generic license. -->
+    https://commons.wikimedia.org/wiki/File:Africa_(orthographic_projection).svg
+
+    www.IconDrawer.com <!-- need to link-->
+</notices>

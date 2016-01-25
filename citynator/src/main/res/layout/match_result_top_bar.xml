@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.facebook.share.widget.ShareButton
+        android:id="@+id/fb_share_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/com_facebook_button_background" />
+
+    <TextView
+        android:id="@+id/high_score"
+        style="@style/high_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fb_share_button"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:text="@string/match_result_new_high_score"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_match_completed_ok"
+        style="@style/flagit_buttons"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/fb_share_button"
+        android:text="@string/match_result_btn_end_match" />
+
+</RelativeLayout>

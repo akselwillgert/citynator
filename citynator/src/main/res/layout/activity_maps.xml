@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="@drawable/dummy_map" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/maps_show_results"
+            style="@style/flagit_buttons"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/maps_btn_show_results"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/maps_btn_go"
+            style="@style/flagit_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/maps_btn_go" />
+
+        <TextView
+            android:id="@+id/city_name"
+            style="@style/countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            tools:text="City Name" />
+
+        <TextView
+            android:id="@+id/admin_name"
+            style="@style/countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="15sp"
+            tools:text="Admin Name" />
+
+        <TextView
+            android:id="@+id/country"
+            style="@style/countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            tools:text="Country"
+
+            />
+
+        <ImageView
+            android:id="@+id/flag"
+            style="@style/countdown"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            tools:src="@drawable/fi" />
+
+        <TextView
+            android:id="@+id/count_down"
+            style="@style/countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            tools:text="10s" />
+    </LinearLayout>
+
+</RelativeLayout>

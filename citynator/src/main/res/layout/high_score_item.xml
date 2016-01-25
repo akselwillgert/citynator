@@ -1,0 +1,27 @@
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/game_results"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_row_bg">
+    <ImageView
+        android:id="@+id/high_score_profile_picture"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        tools:src="@drawable/c1460302_10152127506287150_49113099_n" />
+    <TextView
+        android:id="@+id/high_score_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Aksel W" />
+    <TextView
+        android:id="@+id/high_score_points"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="right"
+        android:textColor="@color/red_900"
+        android:textStyle="bold"
+        tools:text="25p." />
+</TableRow>

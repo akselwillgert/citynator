@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/game_type"
+    style="@style/Divider"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_row_selector">
+
+    <ImageView
+        android:id="@+id/game_type_img"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        android:src="@drawable/ic_oceania_orthographic_projection"
+        />
+
+    <TextView
+        android:id="@+id/game_type_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/game_type_img"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textStyle="bold"
+        tools:text="Title" />
+    <TextView
+        android:id="@+id/best_distance_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/game_type_name"
+        android:layout_below="@id/game_type_name"
+        android:text="@string/game_type_lbl_record" />
+    <TextView
+        android:id="@+id/game_type_best_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/best_distance_label"
+        android:layout_toRightOf="@id/best_distance_label"
+        tools:text="3473km" />
+
+    <TextView
+        android:id="@+id/game_type_score"
+        style="@style/game_type_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        tools:text="30p."
+       />
+</RelativeLayout>

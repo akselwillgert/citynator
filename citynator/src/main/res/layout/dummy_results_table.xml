@@ -1,0 +1,66 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/round_results"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:shrinkColumns="0"
+    android:stretchColumns="1,2">
+
+    <include layout="@layout/match_result_table_header" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+    <include layout="@layout/match_result_table_item" />
+
+    <TableRow
+        style="@style/game_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_row_bg">
+
+        <TextView
+            android:id="@+id/city_name_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="City Name" />
+
+        <ImageView
+
+            android:id="@+id/country_flag_1"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            tools:src="@drawable/fi" />
+
+        <ImageView
+            android:id="@+id/game_result_accuracy_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_gps_fixed_24dp"
+            tools:tint="@color/red_900" />
+        <TextView
+            android:id="@+id/game_result_distance_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            tools:text="3212km" />
+
+        <TextView
+            android:id="@+id/game_result_time_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="right"
+            tools:text="1s"
+            />
+
+    </TableRow>
+
+</TableLayout>

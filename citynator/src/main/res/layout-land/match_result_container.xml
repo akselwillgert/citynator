@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/results_map_and_score"
+    style="@style/details_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:weightSum="1.0">
+
+    <LinearLayout
+        android:id="@+id/map_container"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight=".5"
+        android:background="@color/Red">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            tools:background="@drawable/dummy_map" />
+
+    </LinearLayout>
+
+    <include
+        layout="@layout/match_result_table"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight=".5" />
+</LinearLayout>

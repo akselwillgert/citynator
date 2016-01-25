@@ -1,0 +1,21 @@
+<resources>
+    <string name="points_p">%1$dp.</string>
+    <string name="distance_km">%1$skm</string>
+    <string name="time_s">%1$ss</string>
+    <string name="app_name">Citynator</string>
+    <string name="title_activity_maps">Citynator - Map</string>
+    <string name="title_activity_match_result">Citynator - Result</string>
+    <string name="title_activity_main">Citynator</string>
+    <string name="match_result_table_header_total">Total</string>
+    <string name="match_result_new_high_score">New Highscore!</string>
+    <string name="match_result_btn_end_match">end match</string>
+    <string name="maps_btn_show_results">show results</string>
+    <string name="game_type_lbl_record">Record:</string>
+    <string name="maps_btn_go">GO!</string>
+    <string name="main_btn_fb_join_high_scores">Join Highscores</string>
+    <string name="main_high_score_header_name">name</string>
+    <string name="main_high_score_header_points">Points</string>
+    <string name="main_btn_licenses">Licenses</string>
+    <string name="main_lbl_select_region">Select region and start tapping cities!</string>
+    <string name="main_not_played_yet">Not played yet</string>
+</resources>

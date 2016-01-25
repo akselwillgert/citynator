@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/info_text"
+            style="@style/details_frame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/main_lbl_select_region" />
+
+        <LinearLayout
+            android:id="@+id/area_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/info_text"
+            android:orientation="vertical" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/area_list"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp" />
+
+        <Button
+            android:id="@+id/join_facebook_highscore"
+            style="@style/com_facebook_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_button"
+            android:layout_centerHorizontal="true"
+            android:drawableLeft="@drawable/com_facebook_button_icon"
+            android:text="@string/main_btn_fb_join_high_scores"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <TableLayout
+            android:id="@+id/tbl_high_scores"
+            style="@style/details_frame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/join_facebook_highscore"
+            android:orientation="horizontal"
+            android:stretchColumns="2"
+            android:visibility="gone">
+
+            <TableRow
+                style="@style/game_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_high_score_header_name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="right"
+                    android:text="@string/main_high_score_header_points"
+                    android:textStyle="bold" />
+            </TableRow>
+        </TableLayout>
+
+        <Button
+            android:id="@+id/show_license_dlg_btn"
+            style="@style/flagit_buttons"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/tbl_high_scores"
+            android:layout_centerHorizontal="true"
+            android:text="@string/main_btn_licenses" />
+    </RelativeLayout>
+</ScrollView>

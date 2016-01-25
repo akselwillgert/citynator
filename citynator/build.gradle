@@ -1,0 +1,102 @@
+apply plugin: 'com.android.application'
+
+// Load application build configuration.
+def Properties prodProperties = new Properties()
+def buildProdFile = new File('build_prod.properties')
+if (buildProdFile.canRead()) {
+    prodProperties.load(new FileInputStream(buildProdFile))
+} else {
+    prodProperties.setProperty('FACEBOOK_APP_ID', "")
+    prodProperties.setProperty('FACEBOOK_AUTH', "")
+    prodProperties.setProperty('GOOGLE_MAPS_API_KEY', "")
+}
+
+def Properties debugProperties = new Properties()
+def buildDebugFile = new File('build_debug.properties')
+if (buildDebugFile.canRead()) {
+    debugProperties.load(new FileInputStream(buildDebugFile))
+    if (!debugProperties.containsKey('GOOGLE_MAPS_API_KEY') || debugProperties.getProperty('GOOGLE_MAPS_API_KEY').equals("")) {
+        println 'missing GOOGLE_MAPS_API_KEY in build_debug.properties'
+        throw InvalidUserDataException("property GOOGLE_MAPS_API_KEY missing in build_debug.properties")
+    }
+} else {
+    throw InvalidUserDataException("could not read build_debug.properties")
+}
+
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        applicationId "se.subsurface.flagit"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 17
+        versionName "0.0.17"
+    }
+
+    signingConfigs {
+        release
+    }
+    buildTypes {
+        release {
+            resValue "string", "facebook_app_id", prodProperties['FACEBOOK_APP_ID']
+            resValue "string", "facebook_auth", prodProperties['FACEBOOK_AUTH']
+            resValue "string", "google_maps_api_key", prodProperties['GOOGLE_MAPS_API_KEY']
+            minifyEnabled true
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            resValue "string", "facebook_app_id", debugProperties['FACEBOOK_APP_ID']
+            resValue "string", "facebook_auth", debugProperties['FACEBOOK_AUTH']
+            resValue "string", "google_maps_api_key", debugProperties['GOOGLE_MAPS_API_KEY']
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.plattysoft.leonids:LeonidsLib:1.3.1'       //Particle
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'de.psdev.licensesdialog:licensesdialog:1.7.0@aar'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.maps.android:android-maps-utils:0.4'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
+    compile 'com.facebook.android:facebook-android-sdk:4.7.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+}
+
+// Fetch properties for signing
+def Properties props = new Properties()
+def propFile = new File('signing.properties')
+if (propFile.canRead()) {
+    props.load(new FileInputStream(propFile))
+    if (props != null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+            props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        println 'signing.properties found but some entries are missing'
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    println 'signing.properties not found'
+    android.buildTypes.release.signingConfig = null
+}
