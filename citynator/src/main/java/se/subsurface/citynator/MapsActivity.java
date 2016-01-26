@@ -42,21 +42,21 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     private GameType gameType;
     //Views
-    private ImageView flagView;
+    private ImageView mFlagView;
     private ViewGroup mapOverlay;
-    private GameTimer gameTimer;
+    private GameTimer mGameTimer;
 
-    private MotionEvent ev;
+    private MotionEvent mMotionEvent;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private TextView mCountDown;
     private TextView mCityName;
     private TextView mAdmin;
     private TextView mCountry;
-    private int padding;
-    private View btnResults;
-    private View btnGo;
+    private int mPadding;
+    private View mBtnResults;
+    private View mBtnGo;
 
-    private FlagMatch match;
+    private FlagMatch mMatch;
     private boolean resumed = false;
 
     @Override
@@ -66,26 +66,27 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         setContentView(R.layout.activity_maps);
 
         //Find view stuff
-        padding = this.getResources().getDimensionPixelSize(R.dimen.map_marker_padding);
+        mPadding = this.getResources().getDimensionPixelSize(R.dimen.map_marker_padding);
         mapOverlay = (ViewGroup) findViewById(R.id.map_overlay);
-        flagView = (ImageView) findViewById(R.id.flag);
+        mFlagView = (ImageView) findViewById(R.id.flag);
         mCountDown = (TextView) findViewById(R.id.count_down);
         mCityName = (TextView) findViewById(R.id.city_name);
         mAdmin = (TextView) findViewById(R.id.admin_name);
         mCountry = (TextView) findViewById(R.id.country);
 
-        btnResults = findViewById(R.id.maps_show_results);
-        btnGo = findViewById(R.id.maps_btn_go);
+        mBtnResults = findViewById(R.id.maps_show_results);
+        mBtnGo = findViewById(R.id.maps_btn_go);
 
-        btnResults.setOnClickListener(this);
-        btnGo.setOnClickListener(this);
+        mBtnResults.setOnClickListener(this);
+        mBtnGo.setOnClickListener(this);
 
         if (savedInstanceState != null) {
             boolean preRound = savedInstanceState.getBoolean(PRE_ROUND);
             long timeRemaining = savedInstanceState.getLong(TIMER);
             Log.d(TAG, "preRound=" + preRound + ", timeRemaining=" + timeRemaining);
-            gameTimer = new GameTimer(timeRemaining, preRound);
-            match = FlagItApplication.getInstance().match;
+            mMatch = FlagItApplication.getInstance().match;
+            mGameTimer = new GameTimer(timeRemaining, preRound, mMatch.tick_interval_ms);
+
         } else {
             //this should propably be done in some destruct cycle, instead of startup
             FlagItApplication.getInstance().match = null;
@@ -93,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
         EventBus.getDefault().register(this);
 
-        //Area is used to create match
+        //Area is used to create mMatch
         String area = getIntent().getStringExtra("Area");
         gameType = FlagItApplication.getInstance().getGameType(area);
         Log.d(TAG, "onCreate Return");
@@ -106,9 +107,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     public void onBackPressed() {
         super.onBackPressed();
         FlagItApplication.getInstance().match = null;
-        match = null;
-        if (gameTimer != null) {
-            gameTimer.cancel();
+        mMatch = null;
+        if (mGameTimer != null) {
+            mGameTimer.cancel();
         }
     }
 
@@ -119,10 +120,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     }
 
     private void updateCenterText() {
-        if (gameTimer.preRound) {
+        if (mGameTimer.preRound) {
             updateCenterText("Get Ready!", "", "", "");
         } else {
-            Place place = match.places.get(match.currentRound);
+            Place place = mMatch.places.get(mMatch.currentRound);
             updateCenterText(place.name, place.admin, place.country, place.countryCode);
         }
     }
@@ -130,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     private void updateCenterText(String city, String admin, String country, String countryCode) {
         int id = this.getResources().getIdentifier(countryCode, "drawable",
                 this.getPackageName());
-        flagView.setImageResource(id);
+        mFlagView.setImageResource(id);
         mCityName.setText(city);
         mAdmin.setText(admin);
         mCountry.setText(country);
@@ -138,9 +139,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     @Override
     public void onMapClick(LatLng click) {
-        if (match != null && match.roundInProgress && !match.clicked) {
-            match.clicked = true;
-            RoundResult result = match.roundCompleted(click, gameTimer.timeEllapsed);
+        if (mMatch != null && mMatch.roundInProgress && !mMatch.clicked) {
+            mMatch.clicked = true;
+            RoundResult result = mMatch.roundCompleted(click, mGameTimer.timeEllapsed);
             FlagItUtils.drawPoly(result, mMap, this);
             int particleSize = 0;
             switch (result.accuracy) {
@@ -160,12 +161,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             }
 
             //Draw the explosion
-            if (ev != null) {
+            if (mMotionEvent != null) {
                 new ParticleSystem(this, particleSize, R.drawable.star_white, 800)
                         .setSpeedRange(0.1f, 0.25f)
-                        .emit((int) ev.getX(), (int) ev.getY(), 1000, 100);
+                        .emit((int) mMotionEvent.getX(), (int) mMotionEvent.getY(), 1000, 100);
             }
-            gameTimer.cancel();
+            mGameTimer.cancel();
 
             nextRound();
         }
@@ -208,46 +209,46 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     }
 
     private void resumeMatch() {
-        Log.d(TAG, "resumeMatch() resumed=" + resumed + ", match=" + match);
+        Log.d(TAG, "resumeMatch() resumed=" + resumed + ", mMatch=" + mMatch);
         if (!resumed) {
             resumed = true;
 
-            if (match == null) {
-                btnGo.setVisibility(View.VISIBLE);
-                btnResults.setVisibility(View.GONE);
+            if (mMatch == null) {
+                mBtnGo.setVisibility(View.VISIBLE);
+                mBtnResults.setVisibility(View.GONE);
                 EventBus.getDefault().post(new EventStartMatch(gameType));
             } else {
                 mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                     @Override
                     public void onCameraChange(CameraPosition arg0) {
                         // Move camera.
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(match.bounds, padding));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMatch.bounds, mPadding));
                         // Remove listener to prevent position reset on camera move.
                         mMap.setOnCameraChangeListener(null);
                     }
                 });
-                switch (match.matchState) {
+                switch (mMatch.matchState) {
                     case NOT_STARTED:
-                        btnGo.setVisibility(View.VISIBLE);
+                        mBtnGo.setVisibility(View.VISIBLE);
                         break;
                     case IN_PROGRESS:
-                        btnGo.setVisibility(View.GONE);
-                        btnResults.setVisibility(View.GONE);
-                        //      setBounds(match.bounds, true);
+                        mBtnGo.setVisibility(View.GONE);
+                        mBtnResults.setVisibility(View.GONE);
+                        //      setBounds(mMatch.bounds, true);
                         updateCenterText();
-                        //only start timer if match was started before
-                        gameTimer.startIfNotStarted();
+                        //only start timer if mMatch was started before
+                        mGameTimer.startIfNotStarted();
                         break;
                     case COMPLETED:
-                        btnResults.setVisibility(View.VISIBLE);
-                        btnGo.setVisibility(View.GONE);
+                        mBtnResults.setVisibility(View.VISIBLE);
+                        mBtnGo.setVisibility(View.GONE);
                         break;
                 }
             }
         } else {
             //Trigger the timer here, if it exists. needed when shutdown screen and return on
-            if (gameTimer != null && match.matchState == FlagMatch.MatchState.IN_PROGRESS) {
-                gameTimer.startIfNotStarted();
+            if (mGameTimer != null && mMatch.matchState == FlagMatch.MatchState.IN_PROGRESS) {
+                mGameTimer.startIfNotStarted();
             }
         }
     }
@@ -256,18 +257,18 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (gameTimer != null) {
-            gameTimer.cancel();
-            gameTimer.started = false;
-            if (gameTimer.millisUntilFinished > 0) {
-                outState.putBoolean(PRE_ROUND, gameTimer.preRound);
-                outState.putLong(TIMER, gameTimer.millisUntilFinished);
+        if (mGameTimer != null) {
+            mGameTimer.cancel();
+            mGameTimer.started = false;
+            if (mGameTimer.millisUntilFinished > 0) {
+                outState.putBoolean(PRE_ROUND, mGameTimer.preRound);
+                outState.putLong(TIMER, mGameTimer.millisUntilFinished);
             }
 
             Log.d(TAG, "onSaveInstanceState() outstate=" + outState);
         }
-        if (match != null) {
-            outState.putParcelable(BOUNDS, match.bounds);
+        if (mMatch != null) {
+            outState.putParcelable(BOUNDS, mMatch.bounds);
         }
     }
 
@@ -277,15 +278,15 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             case R.id.maps_show_results:
                 Log.d(TAG, "matchComplete()");
                 Intent intent = new Intent(this, MatchResultActivity.class);
-                intent.putExtra("FlagMatch", match);
-                intent.putExtra("Bounds", match.bounds);
+                intent.putExtra("FlagMatch", mMatch);
+                intent.putExtra("Bounds", mMatch.bounds);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 FlagItApplication.getInstance().match = null;
-                match = null;
+                mMatch = null;
                 startActivity(intent);
                 break;
             case R.id.maps_btn_go:
-                match.matchState = FlagMatch.MatchState.IN_PROGRESS;
+                mMatch.matchState = FlagMatch.MatchState.IN_PROGRESS;
                 nextRound();
                 v.setVisibility(View.GONE);
                 break;
@@ -299,7 +300,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        this.ev = ev;
+        this.mMotionEvent = ev;
         return super.dispatchTouchEvent(ev);
     }
 
@@ -316,10 +317,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     @SuppressWarnings("unused")
     public void onEventMainThread(EventStartMatchResponse event) {
         FlagItApplication.getInstance().match = event.match;
-        this.match = event.match;
+        this.mMatch = event.match;
 
         //animate camera to show new area
-        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(match.bounds, padding);
+        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(mMatch.bounds, mPadding);
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
@@ -330,12 +331,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
     private void nextRound() {
         Log.d(TAG, "nextRound");
-        if (match.matchState == FlagMatch.MatchState.COMPLETED) {
-            btnResults.setVisibility(View.VISIBLE);
+        if (mMatch.matchState == FlagMatch.MatchState.COMPLETED) {
+            mBtnResults.setVisibility(View.VISIBLE);
         } else {
-            match.clicked = false;
-            gameTimer = new GameTimer(match.count_down_ms, true);
-            gameTimer.startIfNotStarted();
+            mMatch.clicked = false;
+            mGameTimer = new GameTimer(mMatch.count_down_ms, true, mMatch.tick_interval_ms);
+            mGameTimer.startIfNotStarted();
             updateCenterText();
         }
 
@@ -364,8 +365,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         public long millisUntilFinished;
         boolean started = false;
 
-        public GameTimer(long time, boolean preRound) {
-            super(time, match.tick_interval_ms);
+        public GameTimer(long time, boolean preRound, int tickIntervalMs) {
+            super(time, tickIntervalMs);
             millisUntilFinished = time;
             this.preRound = preRound;
         }
@@ -380,7 +381,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
         public void onTick(long millisUntilFinished) {
 
-            timeEllapsed += match.tick_interval_ms;
+            timeEllapsed += mMatch.tick_interval_ms;
             this.millisUntilFinished = millisUntilFinished;
             mCountDown.setText(FlagItUtils.getSecondsAndDecimal(millisUntilFinished));
         }
@@ -390,27 +391,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             Log.d(TAG, "onFinish()");
             if (preRound) {
                 Log.d(TAG, "StartRound()");
-                match.roundInProgress = true;
+                mMatch.roundInProgress = true;
                 mMap.clear();
-                gameTimer = new GameTimer(match.round_time_ms, false);
-                gameTimer.startIfNotStarted();
+                mGameTimer = new GameTimer(mMatch.round_time_ms, false, mMatch.tick_interval_ms);
+                mGameTimer.startIfNotStarted();
                 updateCenterText();
             } else {
                 //No click in time, report timeout result
-                match.roundTimeout();
+                mMatch.roundTimeout();
                 //drawPoly(result);
                 nextRound();
             }
-        }
-
-        @Override
-        public String toString() {
-            return "GameTimer{" +
-                    "timeEllapsed=" + timeEllapsed +
-                    ", millisUntilFinished=" + millisUntilFinished +
-                    ", preRound=" + preRound +
-                    ", started=" + started +
-                    "} " + super.toString();
         }
     }
 
