@@ -8,4 +8,3 @@ build
 *.apk
 build_prod.properties
 /signing.properties
-/build_debug.properties
