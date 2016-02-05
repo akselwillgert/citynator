@@ -6,8 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/info_text"
@@ -60,7 +59,7 @@
                 style="@style/game_results"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/gradient"
+                android:background="@drawable/list_row_header"
                 tools:ignore="UselessParent">
 
                 <TextView
@@ -88,7 +87,7 @@
 
         <Button
             android:id="@+id/show_license_dlg_btn"
-            style="@style/flagit_buttons"
+            style="@style/citynator_red_button"
             android:layout_width="wrap_content"
             android:layout_below="@id/tbl_high_scores"
             android:layout_centerHorizontal="true"

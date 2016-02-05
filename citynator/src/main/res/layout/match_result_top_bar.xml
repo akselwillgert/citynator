@@ -23,7 +23,7 @@
 
     <Button
         android:id="@+id/btn_match_completed_ok"
-        style="@style/flagit_buttons"
+        style="@style/citynator_red_button"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/fb_share_button"

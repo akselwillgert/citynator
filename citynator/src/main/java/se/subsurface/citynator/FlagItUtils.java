@@ -160,7 +160,7 @@ public abstract class FlagItUtils {
                 accuracyColor = R.color.yellow_500;
                 break;
             case BLACK:
-                accuracyColor = R.color.Black;
+                accuracyColor = R.color.black;
                 break;
             case TIME_OUT:
                 accuracyColor = R.color.grey_400;
