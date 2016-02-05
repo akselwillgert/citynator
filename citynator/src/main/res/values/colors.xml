@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bar_bg_color">#5533b5e5</color>
-
-    <color name="text_darker">#666666</color>
-    <color name="text_lighter">#888888</color>
-    <color name="list_divider">#d9d9d9</color>
     <color name="list_row_start_color">#eeeeee</color>
     <color name="list_row_end_color">#ffffff</color>
     <color name="list_row_hover_start_color">@color/red_100</color>
     <color name="list_row_hover_end_color">@color/red_900</color>
 
-    <color name="highlightedTextViewColor">#000088</color>
-    <color name="normalTextViewColor">#000044</color>
-
-    <color name="list_view_place_row_1">#f2f2f2</color>
-    <color name="list_view_place_row_2">#e7e7e7</color>
-
-    <color name="black_overlay">#66000000</color>
-
+    <color name="citynator_blue_alpha">#FF0000FF</color>
+    <color name="citynator_grey_shadow">#333333</color>
 
     <!-- Red -->
     <color name="red_50">#FFEBEE</color>
@@ -332,10 +321,8 @@
 
     <!-- Black -->
     <color name="black">#000000</color>
-    <!-- Black -->
 
     <!-- White -->
     <color name="white">#FFFFFF</color>
-    <!-- White -->
 
 </resources>

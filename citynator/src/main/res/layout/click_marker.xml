@@ -7,5 +7,5 @@
     android:layout_height="wrap_content"
     android:drawableBottom="@drawable/ic_gps_fixed_24dp"
     android:gravity="center_horizontal"
-    tools:drawableTint="@color/Red"
+    tools:drawableTint="@color/red_900"
     tools:text="city" />

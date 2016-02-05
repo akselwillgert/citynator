@@ -20,7 +20,7 @@
 
         <Button
             android:id="@+id/maps_show_results"
-            style="@style/flagit_buttons"
+            style="@style/citynator_red_button"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:text="@string/maps_btn_show_results"
@@ -28,7 +28,7 @@
 
         <Button
             android:id="@+id/maps_btn_go"
-            style="@style/flagit_buttons"
+            style="@style/citynator_red_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -57,13 +57,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            tools:text="Country"
-
-            />
+            tools:text="Country" />
 
         <ImageView
             android:id="@+id/flag"
-            style="@style/countdown"
             android:layout_width="40dp"
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"

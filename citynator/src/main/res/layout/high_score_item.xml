@@ -18,10 +18,10 @@
         tools:text="Aksel W" />
     <TextView
         android:id="@+id/high_score_points"
+        style="@style/high_score"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:gravity="right"
-        android:textColor="@color/red_900"
-        android:textStyle="bold"
+        android:textSize="12sp"
         tools:text="25p." />
 </TableRow>

@@ -12,8 +12,7 @@
         android:id="@+id/map_container"
         android:layout_width="0dip"
         android:layout_height="match_parent"
-        android:layout_weight=".5"
-        android:background="@color/Red">
+        android:layout_weight=".5">
 
         <fragment
             android:id="@+id/map"
