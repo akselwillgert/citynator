@@ -19,5 +19,7 @@
 -keepclassmembers class ** {
     public void onEvent*(***);
 }
--keep class de.psdev.licensesdialog.** { *; }
 -dontwarn de.psdev.**
+
+-keep class com.daimajia.easing.** { *; }
+-keep interface com.daimajia.easing.** { *; }

@@ -17,17 +17,24 @@
             android:text="@string/main_lbl_select_region" />
 
         <LinearLayout
-            android:id="@+id/area_list"
+            android:id="@+id/region_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/info_text"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:id="@+id/country_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/region_list"
             android:orientation="vertical" />
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/area_list"
+            android:layout_below="@id/country_list"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="30dp"

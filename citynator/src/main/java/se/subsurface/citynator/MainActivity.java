@@ -22,7 +22,6 @@ import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -35,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppEventsLogger.activateApp(this);
+
         setContentView(R.layout.activity_main);
         //Facebook
         callbackManager = CallbackManager.Factory.create();
@@ -86,44 +86,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ViewGroup areaView = (ViewGroup) findViewById(R.id.area_list);
+        ViewGroup regionView = (ViewGroup) findViewById(R.id.region_list);
 
-        for (final GameType gameType: FlagItApplication.getInstance().gameTypes) {
-            RelativeLayout gameTypeView = (RelativeLayout)LayoutInflater.from(this).inflate(R.layout.game_type, areaView, false);
-
-            TextView areaTV = (TextView) gameTypeView.findViewById(R.id.game_type_name);
-            TextView scoreTV = (TextView) gameTypeView.findViewById(R.id.game_type_score);
-            TextView bestDistanceTV = (TextView) gameTypeView.findViewById(R.id.game_type_best_distance);
-            ImageView flagView = (ImageView) gameTypeView.findViewById(R.id.game_type_img);
-            flagView.setImageResource(gameType.imageId);
-
-            areaTV.setText(gameType.name);
-
-            int bestScore = FlagItApplication.getInstance().getHighscore(gameType.name);
-            double bestDistance = FlagItApplication.getInstance().getDistance(gameType.name);
-
-            if (bestScore != -1) {
-                scoreTV.setText(getResources().getString(R.string.points_p, bestScore));
-                totalScore.addAndGet(bestScore);
-            }
-            if (bestDistance != -1) {
-                String bestDistanceString = FlagItUtils.round(bestDistance, 1) + "km";
-                bestDistanceTV.setText(bestDistanceString);
-            } else {
-                bestDistanceTV.setText(R.string.main_not_played_yet);
-            }
-
-            areaView.addView(gameTypeView);
-            gameTypeView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                    intent.putExtra("Area", gameType.name);
-                    startActivity(intent);
-
-                }
-            });
+        for (final GameType gameType : FlagItApplication.getInstance().getRegions()) {
+            add(gameType, regionView);
         }
+        ViewGroup countryView = (ViewGroup) findViewById(R.id.country_list);
+
+        for (final GameType gameType : FlagItApplication.getInstance().getCountries()) {
+            add(gameType, countryView);
+        }
+
         if (isLoggedIn()) {
             showFacebookHighscores();
             setupJoinHighscoreButton();
@@ -173,22 +146,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLoggedIn() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         return accessToken != null;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
     }
 
     @Override
@@ -243,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //Update views
                                 nameTV.setText(name);
-                                scoreTV.setText(String.format("%d",score));
+                                scoreTV.setText(String.format(Locale.getDefault(), "%d", score));
                                 ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
                                 DisplayImageOptions options = new DisplayImageOptions.Builder()
                                         .cacheInMemory(true)
@@ -305,5 +262,43 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "No Facebook write permissions");
         }
+    }
+
+
+    private void add(final GameType gameType, ViewGroup areaView) {
+        RelativeLayout gameTypeView = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.game_type, areaView, false);
+
+        TextView areaTV = (TextView) gameTypeView.findViewById(R.id.game_type_name);
+        TextView scoreTV = (TextView) gameTypeView.findViewById(R.id.game_type_score);
+        TextView bestDistanceTV = (TextView) gameTypeView.findViewById(R.id.game_type_best_distance);
+        ImageView flagView = (ImageView) gameTypeView.findViewById(R.id.game_type_img);
+        flagView.setImageResource(gameType.imageId);
+
+        areaTV.setText(gameType.name);
+
+        int bestScore = FlagItApplication.getInstance().getHighscore(gameType.name);
+        double bestDistance = FlagItApplication.getInstance().getDistance(gameType.name);
+
+        if (bestScore != -1) {
+            scoreTV.setText(getResources().getString(R.string.points_p, bestScore));
+            totalScore.addAndGet(bestScore);
+        }
+        if (bestDistance != -1) {
+            String bestDistanceString = FlagItUtils.round(bestDistance, 1) + "km";
+            bestDistanceTV.setText(bestDistanceString);
+        } else {
+            bestDistanceTV.setText(R.string.main_not_played_yet);
+        }
+
+        areaView.addView(gameTypeView);
+        gameTypeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.putExtra("Area", gameType.name);
+                startActivity(intent);
+
+            }
+        });
     }
 }

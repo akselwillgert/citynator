@@ -1,6 +1,7 @@
 package se.subsurface.citynator;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.FragmentActivity;
@@ -11,15 +12,19 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.plattysoft.leonids.ParticleSystem;
 
@@ -38,24 +43,24 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     private static final String PRE_ROUND = "PreRound";
     private static final String TIMER = "Timer";
     private static final String BOUNDS = "Bounds";
-
-
+    int indicatorWidth;
     private GameType gameType;
     //Views
     private ImageView mFlagView;
     private ViewGroup mapOverlay;
     private GameTimer mGameTimer;
-
     private MotionEvent mMotionEvent;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private TextView mCountDown;
+    //    private TextView mCountDown;
     private TextView mCityName;
     private TextView mAdmin;
     private TextView mCountry;
     private int mPadding;
     private View mBtnResults;
     private View mBtnGo;
-
+    private TextView map_hit;
+    private LinearLayout map_hit_container;
+    private LinearLayout timeIndicator;
     private FlagMatch mMatch;
     private boolean resumed = false;
 
@@ -69,11 +74,15 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         mPadding = this.getResources().getDimensionPixelSize(R.dimen.map_marker_padding);
         mapOverlay = (ViewGroup) findViewById(R.id.map_overlay);
         mFlagView = (ImageView) findViewById(R.id.flag);
-        mCountDown = (TextView) findViewById(R.id.count_down);
+        //mCountDown = (TextView) findViewById(R.id.count_down);
         mCityName = (TextView) findViewById(R.id.city_name);
         mAdmin = (TextView) findViewById(R.id.admin_name);
         mCountry = (TextView) findViewById(R.id.country);
+        map_hit = (TextView) findViewById(R.id.map_hit);
+        map_hit_container = (LinearLayout) findViewById(R.id.map_hit_container);
 
+        timeIndicator = (LinearLayout) findViewById(R.id.time_indicator);
+        indicatorWidth = timeIndicator.getLayoutParams().width;
         mBtnResults = findViewById(R.id.maps_show_results);
         mBtnGo = findViewById(R.id.maps_btn_go);
 
@@ -120,8 +129,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     }
 
     private void updateCenterText() {
-        if (mGameTimer.preRound) {
+        if (mGameTimer.preRound && mMatch.currentRound == 0) {
             updateCenterText("Get Ready!", "", "", "");
+        } else if ((mGameTimer.preRound && mMatch.currentRound > 0)) {
+            updateCenterText("", "", "", "");
         } else {
             Place place = mMatch.places.get(mMatch.currentRound);
             updateCenterText(place.name, place.admin, place.country, place.countryCode);
@@ -131,18 +142,50 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     private void updateCenterText(String city, String admin, String country, String countryCode) {
         int id = this.getResources().getIdentifier(countryCode, "drawable",
                 this.getPackageName());
+
+
         mFlagView.setImageResource(id);
         mCityName.setText(city);
         mAdmin.setText(admin);
         mCountry.setText(country);
+
+        //      YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms/2).playOn(mFlagView);
+        YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms / 2).playOn((ViewGroup) mCityName.getParent());
+        //    YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms/2).playOn(mAdmin);
+        //YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms/2).playOn(mCountry);
     }
 
     @Override
     public void onMapClick(LatLng click) {
         if (mMatch != null && mMatch.roundInProgress && !mMatch.clicked) {
             mMatch.clicked = true;
+
+
             RoundResult result = mMatch.roundCompleted(click, mGameTimer.timeEllapsed);
-            FlagItUtils.drawPoly(result, mMap, this);
+            int accuracyColor = FlagItUtils.getAccuracyColor(this, result.accuracy);
+
+            String distance = FlagItUtils.round(result.distance, 0);
+            map_hit.setVisibility(View.VISIBLE);
+            map_hit.setTextColor(accuracyColor);
+            map_hit.setText(distance);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) map_hit_container.getLayoutParams();
+            params.leftMargin = (int) mMotionEvent.getX() - params.width / 2;
+
+            if (!result.below) {
+                params.topMargin = (int) mMotionEvent.getY() - params.height - FlagItUtils.getStatusBarHeight(this);
+            } else {
+                params.topMargin = (int) mMotionEvent.getY() - FlagItUtils.getStatusBarHeight(this);
+            }
+
+            params.addRule(RelativeLayout.CENTER_IN_PARENT, 0);
+
+            map_hit_container.setLayoutParams(params);
+
+            YoYo.with(Techniques.Landing)
+                    .duration(3000)
+                    .playOn(map_hit);
+
+            FlagItUtils.drawPoly(result, mMap, this, true);
             int particleSize = 0;
             switch (result.accuracy) {
                 case RED:
@@ -199,7 +242,20 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 return true;
             }
         });
-        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.mapstyle));
+
+            if (!success) {
+                Log.e("MapsActivityRaw", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapsActivityRaw", "Can't find style.", e);
+        }
+        //googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         // To Disable Zoom you can do2 the following.
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
         googleMap.getUiSettings().setZoomControlsEnabled(false);
@@ -218,13 +274,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 mBtnResults.setVisibility(View.GONE);
                 EventBus.getDefault().post(new EventStartMatch(gameType));
             } else {
-                mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
-                    public void onCameraChange(CameraPosition arg0) {
+                    public void onCameraIdle() {
                         // Move camera.
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMatch.bounds, mPadding));
                         // Remove listener to prevent position reset on camera move.
-                        mMap.setOnCameraChangeListener(null);
+                        mMap.setOnCameraIdleListener(null);
                     }
                 });
                 switch (mMatch.matchState) {
@@ -373,6 +429,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
         synchronized public void startIfNotStarted() {
             if (!started) {
+                timeIndicator.setVisibility(View.VISIBLE);
+
                 started = true;
                 super.start();
             }
@@ -383,23 +441,42 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
             timeEllapsed += mMatch.tick_interval_ms;
             this.millisUntilFinished = millisUntilFinished;
-            mCountDown.setText(FlagItUtils.getSecondsAndDecimal(millisUntilFinished));
+            float percentageRemaining = (float) millisUntilFinished / (Math.abs(millisUntilFinished + timeEllapsed));
+            int width = (int) (indicatorWidth * percentageRemaining);
+            timeIndicator.getLayoutParams().width = width;
+            timeIndicator.requestLayout();
+
         }
 
         @Override
         public void onFinish() {
             Log.d(TAG, "onFinish()");
+            timeIndicator.setVisibility(View.GONE);
             if (preRound) {
                 Log.d(TAG, "StartRound()");
                 mMatch.roundInProgress = true;
                 mMap.clear();
+                map_hit.setText("");
+                map_hit.setVisibility(View.INVISIBLE);
                 mGameTimer = new GameTimer(mMatch.round_time_ms, false, mMatch.tick_interval_ms);
                 mGameTimer.startIfNotStarted();
                 updateCenterText();
             } else {
                 //No click in time, report timeout result
-                mMatch.roundTimeout();
-                //drawPoly(result);
+                RoundResult result = mMatch.roundTimeout();
+                map_hit.setVisibility(View.VISIBLE);
+                map_hit.setTextColor(FlagItUtils.getAccuracyColor(MapsActivity.this, RoundResult.Accuracy.TIME_OUT));
+                map_hit.setText("Timeout");
+                RelativeLayout.LayoutParams layoutParams =
+                        (RelativeLayout.LayoutParams) map_hit_container.getLayoutParams();
+                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                map_hit_container.setLayoutParams(layoutParams);
+
+                YoYo.with(Techniques.Shake)
+                        .duration(700)
+                        .playOn(map_hit);
+
+                FlagItUtils.drawPoly(result, mMap, MapsActivity.this);
                 nextRound();
             }
         }

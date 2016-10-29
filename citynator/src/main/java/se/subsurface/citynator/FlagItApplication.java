@@ -6,14 +6,16 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import se.subsurface.citynator.Model.FlagMatch;
 import se.subsurface.citynator.Model.GameType;
@@ -26,7 +28,7 @@ public class FlagItApplication extends Application {
     private static final String DISTANCE_PREFIX = "Distance_";
     private static final String TAG = "FlagItApplication";
     private static FlagItApplication INSTANCE;
-    public final Set<GameType> gameTypes = new HashSet<>();
+
     private final Map<String, String> countryCodesMap = new HashMap<>();
     private final Map<String, Integer> highscores = new HashMap<>();
     private final Map<String, Double> bestDistance = new HashMap<>();
@@ -40,15 +42,32 @@ public class FlagItApplication extends Application {
         return INSTANCE;
     }
 
-    private void initGameTypes() {
-        gameTypes.add(new GameType("Finland", "country = 'Finland'" + popString(5000), R.drawable.fi));
-        gameTypes.add(new GameType("Sweden", "country = 'Sweden'" + popString(5000), R.drawable.se));
-        gameTypes.add(new GameType("Pacific", "(timezone LIKE 'Pacific%' OR country = 'Australia')" + popString(50000), R.drawable.ic_oceania_orthographic_projection));
+    public List<GameType> getCountries() {
+        List<GameType> gameTypes = new ArrayList<>();
+        //Countries
+        gameTypes.add(new GameType("China", "country = 'China'" + popString(200000), R.drawable.cn));
+        gameTypes.add(new GameType("Finland", "country = 'Finland'" + popString(3000), R.drawable.fi));
+        gameTypes.add(new GameType("Norway", "country = 'Norway'" + popString(3000), R.drawable.no));
+        gameTypes.add(new GameType("Sweden", "country = 'Sweden'" + popString(4000), R.drawable.se));
+        gameTypes.add(new GameType("Poland", "country = 'Poland'" + popString(40000), R.drawable.pl));
+        gameTypes.add(new GameType("Germany", "country = 'Germany'" + popString(60000), R.drawable.de));
+
+        return gameTypes;
+    }
+
+    public List<GameType> getRegions() {
+        List<GameType> gameTypes = new ArrayList<>();
+        //Regions
+        gameTypes.add(new GameType("Pacific", "latitude between -47 AND -2 AND longitude between 112 AND 180" + popString(30000), R.drawable.ic_oceania_orthographic_projection));
         gameTypes.add(new GameType("Africa", "timezone LIKE 'Africa%'" + popString(150000), R.drawable.ic_africa_orthographic_projection));
-        gameTypes.add(new GameType("North America", "(country = 'United States' OR country = 'Canada')" + popString(150000), R.drawable.ic_northern_america_orthographic_projection));
-        gameTypes.add(new GameType("Europe", "timezone LIKE 'Europe%'" + popString(150000), R.drawable.ic_europe_orthographic_projection));
-        gameTypes.add(new GameType("Asia", "timezone LIKE 'Asia%'" + popString(400000), R.drawable.ic_asia_orthographic_projection));
-        gameTypes.add(new GameType("South America", "timezone LIKE 'America%' AND (country != 'United States' AND country != 'Canada')" + popString(150000), R.drawable.ic_latin_america_orthographic_projection));
+        gameTypes.add(new GameType("North America", "(country = 'United States' OR country = 'Canada')" + popString(100000), R.drawable.ic_northern_america_orthographic_projection));
+        gameTypes.add(new GameType("Europe", "timezone LIKE 'Europe%' AND longitude < 44.7" + popString(150000), R.drawable.ic_europe_orthographic_projection));
+        gameTypes.add(new GameType("Asia", "latitude between 5 AND 55 AND longitude between 60 AND 147" + popString(400000), R.drawable.ic_asia_orthographic_projection));
+        gameTypes.add(new GameType("Middle East", "latitude between 12 AND 47 AND longitude between 32 AND 60" + popString(200000), R.drawable.ic_asia_orthographic_projection));
+        gameTypes.add(new GameType("South America", "longitude between -82 AND -34 AND latitude between -56 AND 13" + popString(100000), R.drawable.ic_latin_america_orthographic_projection));
+        gameTypes.add(new GameType("Central America", "latitude between 0 AND 32.4 AND longitude between -100 AND -59 AND country != 'United States'" + popString(50000), R.drawable.ic_latin_america_orthographic_projection));
+        gameTypes.add(new GameType("South East Asia", "latitude between -12 AND 18 AND longitude between 95 AND 141" + popString(150000), R.drawable.ic_asia_orthographic_projection));
+        return gameTypes;
     }
 
     private void initCountryCodeMap() {
@@ -72,9 +91,10 @@ public class FlagItApplication extends Application {
     public void onCreate() {
         Log.d(TAG, "onCreate Enter");
         INSTANCE = this;
-        initGameTypes();
-        super.onCreate();
 
+        super.onCreate();
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         //Universal Image Loader
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
@@ -86,6 +106,8 @@ public class FlagItApplication extends Application {
         ImageLoader.getInstance().init(config);
         prefs = this.getSharedPreferences(FLAGIT_PREFERENCES_V1, Context.MODE_PRIVATE);
 
+        List<GameType> gameTypes = getCountries();
+        gameTypes.addAll(getRegions());
         for (GameType gameType : gameTypes) {
             int score = prefs.getInt(SCORE_PREFIX + gameType.name, -1);
             double distance = prefs.getFloat(DISTANCE_PREFIX + gameType.name, -1);
@@ -107,6 +129,8 @@ public class FlagItApplication extends Application {
 
 
     public GameType getGameType(String name) {
+        List<GameType> gameTypes = getCountries();
+        gameTypes.addAll(getRegions());
         for (GameType gameType : gameTypes) {
             if (gameType.name.equals(name)) {
                 return gameType;
