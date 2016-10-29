@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
 
+
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -13,9 +14,25 @@
         tools:background="@drawable/dummy_map" />
 
     <LinearLayout
+        android:id="@+id/time_indicator"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/rectangle" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/time_indicator"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <Button
@@ -66,13 +83,24 @@
             android:layout_gravity="center_horizontal"
             tools:src="@drawable/fi" />
 
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/map_hit_container"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+
+        android:gravity="center">
+
         <TextView
-            android:id="@+id/count_down"
-            style="@style/countdown"
+            android:id="@+id/map_hit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            tools:text="10s" />
+
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            tools:text="1234" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -10,18 +10,19 @@ public class RoundResult implements Serializable {
     public final Place place;
     public final Accuracy accuracy;
     public long time;
-    public double clickLat;
+    public double clickLat = 0;
     public double clickLong = 0;
     public double distance = -1;
+    public boolean below = false;
 
-    public RoundResult(Place place) {
+    RoundResult(Place place) {
         this.place = place;
         accuracy = Accuracy.TIME_OUT;
         distance = -1;
         time = -1;
     }
 
-    public RoundResult(Place place, double clickLat, double clickLong, long time, LatLngBounds bounds) {
+    RoundResult(Place place, double clickLat, double clickLong, long time, LatLngBounds bounds) {
 
         this.place = place;
         this.clickLat = clickLat;
@@ -32,6 +33,9 @@ public class RoundResult implements Serializable {
         }
 
         double boundsDistance = FlagItUtils.CalculationByDistance(bounds.southwest, bounds.northeast);
+        if (clickLat < place.latitude) {
+            below = true;
+        }
         if (clickLat == -1 && clickLong == -1) {
             distance = -1;
             this.time = -1;

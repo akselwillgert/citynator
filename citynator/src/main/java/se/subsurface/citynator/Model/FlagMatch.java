@@ -60,7 +60,7 @@ public class FlagMatch implements Serializable {
         return result;
     }
 
-    public void roundTimeout() {
+    public RoundResult roundTimeout() {
         roundInProgress = false;
         RoundResult result = new RoundResult(places.get(currentRound));
         currentRound++;
@@ -68,6 +68,7 @@ public class FlagMatch implements Serializable {
         if (currentRound == this.numRounds) {
             matchState = MatchState.COMPLETED;
         }
+        return result;
     }
 
     @Override

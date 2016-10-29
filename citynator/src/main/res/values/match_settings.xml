@@ -1,6 +1,6 @@
 <resources>
     <integer name="round_time_ms">6000</integer>
-    <integer name="tick_intervall_millis">50</integer>
+    <integer name="tick_intervall_millis">20</integer>
     <integer name="round_count_down_ms">2000</integer>
     <integer name="num_rounds">10</integer>
 </resources>

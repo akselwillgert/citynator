@@ -1,16 +1,22 @@
 package se.subsurface.citynator;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -160,7 +166,7 @@ public abstract class FlagItUtils {
                 accuracyColor = R.color.yellow_500;
                 break;
             case BLACK:
-                accuracyColor = R.color.black;
+                accuracyColor = R.color.grey_50;
                 break;
             case TIME_OUT:
                 accuracyColor = R.color.grey_400;
@@ -169,60 +175,83 @@ public abstract class FlagItUtils {
         return ContextCompat.getColor(context, accuracyColor);
     }
 
-
     public static void drawPoly(RoundResult roundResult, GoogleMap mMap, Context context) {
+        drawPoly(roundResult, mMap, context, false);
+    }
+
+    public static LinearLayout getMarkerView(String text, boolean below, boolean live, int color, Context context) {
+        @SuppressLint("InflateParams")//ignoring nullparent here, as view is used for creating bitmap
+                LinearLayout cityView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.city_marker, null);
+        TextView cityNameBelowTV = (TextView) cityView.findViewById(R.id.city_name_below);
+        TextView cityNameAboveTV = (TextView) cityView.findViewById(R.id.city_name_above);
+        if (below) {
+            cityNameBelowTV.setText(text);
+        } else {
+            cityNameAboveTV.setText(text);
+        }
+
+        //Set larger text
+        if (live) {
+
+            if (Build.VERSION.SDK_INT >= 23) {
+                cityNameBelowTV.setTextAppearance(R.style.city_marker_big);
+                cityNameAboveTV.setTextAppearance(R.style.city_marker_big);
+            } else {
+                cityNameAboveTV.setTextAppearance(context, R.style.city_marker_big);
+                cityNameBelowTV.setTextAppearance(context, R.style.city_marker_big);
+            }
+
+        }
+        ImageView cityMarkerIV = (ImageView) cityView.findViewById(R.id.city_marker);
+        Drawable cityDrawable = cityMarkerIV.getDrawable();
+        cityDrawable = DrawableCompat.wrap(cityDrawable);
+        DrawableCompat.setTint(cityDrawable.mutate(), color);
+
+        return cityView;
+    }
+
+    public static void drawPoly(RoundResult roundResult, GoogleMap mMap, Context context, boolean live) {
         LatLng cityLocation = new LatLng(roundResult.place.latitude, roundResult.place.longitude);
         IconGenerator iconFactory = new IconGenerator(context);
         iconFactory.setBackground(new ColorDrawable(Color.TRANSPARENT));
         //Distance
         double distance = FlagItUtils.CalculationByDistance(roundResult.clickLat, roundResult.clickLong, roundResult.place.latitude, roundResult.place.longitude);
+        int accuracyColor = FlagItUtils.getAccuracyColor(context, roundResult.accuracy);
 
+        LinearLayout cityView = getMarkerView(roundResult.place.name, !roundResult.below, live, accuracyColor, context);
 
-        @SuppressLint("InflateParams")//ignoring nullparent here, as view is used for creating bitmap
-                TextView cityView = (TextView) LayoutInflater.from(context).inflate(R.layout.city_marker, null);
-        cityView.setText(roundResult.place.name);
+        //    setTintOnDrawable(cityView, accuracyColor);
         iconFactory.setContentView(cityView);
+
         //place City marker if not already created
         MarkerOptions placeMarkerOptions = new MarkerOptions().
                 position(cityLocation).
                 flat(true).
-                anchor(0.5f, 0.75f).
-                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(roundResult.place.name)));
+                anchor(0.5f, 0.5f).
+                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon()));
         mMap.addMarker(placeMarkerOptions);
 
-        //Click marker
-        int accuracyColor = FlagItUtils.getAccuracyColor(context, roundResult.accuracy);
-        @SuppressLint("InflateParams") //ignoring nullparent here, as view is used for creating bitmap
-                TextView clickMarkerTextView = (TextView) LayoutInflater.from(context).inflate(R.layout.click_marker, null);
-        clickMarkerTextView.setText(FlagItUtils.round(distance, 0));
-        clickMarkerTextView.setTextColor(accuracyColor);
-
-        Drawable[] drawables = clickMarkerTextView.getCompoundDrawables();
-        for (Drawable drawable : drawables) {
-            if (drawable != null) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    drawable.setTint(accuracyColor);
-                } else {
-                    Drawable wrapedDrawable = DrawableCompat.wrap(drawable);
-                    DrawableCompat.setTint(wrapedDrawable, accuracyColor);
-                    clickMarkerTextView.setCompoundDrawables(null, null, null, drawable);
-                }
-            }
-        }
-
-        iconFactory.setContentView(clickMarkerTextView);
-        iconFactory.setBackground(new ColorDrawable(Color.TRANSPARENT));
-        Bitmap bm = iconFactory.makeIcon();
-        MarkerOptions clickMarkerOptions = new MarkerOptions()
-                .flat(true)
-                .icon(BitmapDescriptorFactory.fromBitmap(bm))
-                .position(new LatLng(roundResult.clickLat, roundResult.clickLong))
-                .anchor(0.5f, 0.75f);
-
-        mMap.addMarker(clickMarkerOptions);
-
-        //The line between
         if (roundResult.accuracy != RoundResult.Accuracy.TIME_OUT) {
+            String text = "";
+            if (!live) {
+                //This is shown with animation during live game
+                text = FlagItUtils.round(distance, 0);
+            }
+            LinearLayout clickMarkerView = getMarkerView(text, roundResult.below, live, accuracyColor, context);
+
+
+            iconFactory.setContentView(clickMarkerView);
+            iconFactory.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            Bitmap bm = iconFactory.makeIcon();
+            MarkerOptions clickMarkerOptions = new MarkerOptions()
+                    .flat(true)
+                    .icon(BitmapDescriptorFactory.fromBitmap(bm))
+                    .position(new LatLng(roundResult.clickLat, roundResult.clickLong))
+                    .anchor(0.5f, 0.5f);
+
+            mMap.addMarker(clickMarkerOptions);
+
+            //The line between
             PolylineOptions line =
                     new PolylineOptions()
                             .add(new LatLng(roundResult.clickLat, roundResult.clickLong), cityLocation)
@@ -235,5 +264,19 @@ public abstract class FlagItUtils {
 
     }
 
-}
+    public static int getStatusBarHeight(Activity activity) {
+        Rect rectangle = new Rect();
+        Window window = activity.getWindow();
+        window.getDecorView().
 
+                getWindowVisibleDisplayFrame(rectangle);
+
+        int statusBarHeight = rectangle.top;
+        int contentViewTop =
+                window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+        int titleBarHeight = contentViewTop - statusBarHeight;
+
+        Log.v(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+        return statusBarHeight;
+    }
+}

@@ -1,6 +1,7 @@
 package se.subsurface.citynator;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,8 +28,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 
 import se.subsurface.citynator.Model.FlagMatch;
@@ -151,23 +152,36 @@ public class MatchResultActivity extends FragmentActivity implements View.OnClic
                 return true;
             }
         });
-        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.mapstyle));
+
+            if (!success) {
+                Log.e("MapsActivityRaw", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapsActivityRaw", "Can't find style.", e);
+        }
+        //googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         // To Disable Zoom you can do2 the following.
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
         googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.getUiSettings().setZoomGesturesEnabled(false);
 
 
-        //http://stackoverflow.com/a/13800112/1418643
+        // http://stackoverflow.com/a/13800112/1418643
         //Trick to set bounds when map is loaded,
         final int padding = this.getResources().getDimensionPixelSize(R.dimen.map_marker_padding);
-        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
-            public void onCameraChange(CameraPosition arg0) {
+            public void onCameraIdle() {
                 // Move camera.
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
                 // Remove listener to prevent position reset on camera move.
-                mMap.setOnCameraChangeListener(null);
+                mMap.setOnCameraIdleListener(null);
             }
         });
 
