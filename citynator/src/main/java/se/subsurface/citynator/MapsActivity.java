@@ -149,10 +149,8 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         mAdmin.setText(admin);
         mCountry.setText(country);
 
-        //      YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms/2).playOn(mFlagView);
         YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms / 2).playOn((ViewGroup) mCityName.getParent());
-        //    YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms/2).playOn(mAdmin);
-        //YoYo.with(Techniques.Pulse).duration(mMatch.count_down_ms/2).playOn(mCountry);
+
     }
 
     @Override
@@ -442,8 +440,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             timeEllapsed += mMatch.tick_interval_ms;
             this.millisUntilFinished = millisUntilFinished;
             float percentageRemaining = (float) millisUntilFinished / (Math.abs(millisUntilFinished + timeEllapsed));
-            int width = (int) (indicatorWidth * percentageRemaining);
-            timeIndicator.getLayoutParams().width = width;
+            timeIndicator.getLayoutParams().width = (int) (indicatorWidth * percentageRemaining);
             timeIndicator.requestLayout();
 
         }
