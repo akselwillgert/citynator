@@ -18,4 +18,5 @@
     <string name="main_btn_licenses">Licenses</string>
     <string name="main_lbl_select_region">Select region and start tapping cities!</string>
     <string name="main_not_played_yet">Not played yet</string>
+    <string name="timeout">Timeout</string>
 </resources>

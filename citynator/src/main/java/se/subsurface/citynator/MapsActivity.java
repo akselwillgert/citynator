@@ -214,7 +214,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             case BLACK:
                 Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake2);
                 mapOverlay.startAnimation(shake);
-                FlagItApplication.getInstance().playMIss();
+                FlagItApplication.getInstance().playMiss();
                 break;
         }
 
@@ -236,9 +236,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     private void setUpMapIfNeeded() {
         if (mMap != null) {
             resumeMatch();
+        } else {
+            SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
+            mapFragment.getMapAsync(this);
         }
-        SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
-        mapFragment.getMapAsync(this);
 
 
     }
@@ -271,15 +272,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
         googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.getUiSettings().setZoomGesturesEnabled(false);
-
+        googleMap.getUiSettings().setRotateGesturesEnabled(false);
         resumeMatch();
     }
 
     private void resumeMatch() {
-        Log.d(TAG, "resumeMatch() resumed=" + resumed + ", mMatch=" + mMatch);
-        if (!resumed) {
-            resumed = true;
-
+        Log.v(TAG, "resumeMatch() mMatch=" + mMatch);
             if (mMatch == null) {
                 mBtnGo.setVisibility(View.VISIBLE);
                 mBtnResults.setVisibility(View.GONE);
@@ -312,23 +310,24 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                         break;
                 }
             }
-        } else {
             //Trigger the timer here, if it exists. needed when shutdown screen and return on
             if (mGameTimer != null && mMatch.matchState == FlagMatch.MatchState.IN_PROGRESS) {
+                Log.d(TAG, "resuming with remaining time=" + mGameTimer.millisUntilFinished);
                 mGameTimer.startIfNotStarted();
             }
-        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e(TAG, "onPause");
+        Log.d(TAG, "onPause");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState()");
         if (mGameTimer != null) {
             mGameTimer.cancel();
             mGameTimer.started = false;
@@ -356,6 +355,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 FlagItApplication.getInstance().match = null;
                 mMatch = null;
                 startActivity(intent);
+                finish();
                 break;
             case R.id.maps_btn_go:
                 mMatch.matchState = FlagMatch.MatchState.IN_PROGRESS;
@@ -402,7 +402,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     }
 
     private void nextRound() {
-        Log.d(TAG, "nextRound");
+        Log.v(TAG, "nextRound");
         if (mMatch.matchState == FlagMatch.MatchState.COMPLETED) {
             mBtnResults.setVisibility(View.VISIBLE);
         } else {
@@ -465,10 +465,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
         @Override
         public void onFinish() {
-            Log.d(TAG, "onFinish()");
+            Log.v(TAG, "onFinish()");
             timeIndicator.setVisibility(View.GONE);
             if (preRound) {
-                Log.d(TAG, "StartRound()");
+                Log.v(TAG, "StartRound()");
                 mMatch.roundInProgress = true;
                 mMap.clear();
                 map_hit.setText("");
@@ -477,12 +477,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 mGameTimer.startIfNotStarted();
                 updateCenterText();
             } else {
+                Log.d(TAG, "timeout");
                 //No click in time, report timeout result
                 RoundResult result = mMatch.roundTimeout();
                 FlagItApplication.getInstance().playTimeout();
                 map_hit.setVisibility(View.VISIBLE);
                 map_hit.setTextColor(FlagItUtils.getAccuracyColor(MapsActivity.this, RoundResult.Accuracy.TIME_OUT));
-                map_hit.setText("Timeout");
+                map_hit.setText(R.string.timeout);
                 RelativeLayout.LayoutParams layoutParams =
                         (RelativeLayout.LayoutParams) map_hit_container.getLayoutParams();
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);

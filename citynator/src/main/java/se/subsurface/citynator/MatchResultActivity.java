@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,16 +80,13 @@ public class MatchResultActivity extends FragmentActivity implements View.OnClic
 
             TextView distance = (TextView) resultRow.findViewById(R.id.game_result_distance);
             TextView time = (TextView) resultRow.findViewById(R.id.game_result_time);
-            ImageView accurcy = (ImageView) resultRow.findViewById(R.id.game_result_accuracy);
+            ImageView accuracy = (ImageView) resultRow.findViewById(R.id.game_result_accuracy);
 
             int accuracyColor = FlagItUtils.getAccuracyColor(this, roundResult.accuracy);
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                accurcy.getDrawable().setTint(accuracyColor);
-            } else {
-                //pre API 21
-                accurcy.setColorFilter(accuracyColor);
-            }
+            Drawable cityDrawable = accuracy.getDrawable();
+            cityDrawable = DrawableCompat.wrap(cityDrawable);
+            DrawableCompat.setTint(cityDrawable.mutate(), accuracyColor);
 
             distance.setText(getResources().getString(R.string.distance_km, FlagItUtils.round(roundResult.distance, 0)));
             time.setText(getResources().getString(R.string.time_s, FlagItUtils.getSecondsAndDecimal(roundResult.time)));
