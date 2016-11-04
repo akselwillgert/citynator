@@ -90,17 +90,16 @@
         android:id="@+id/map_hit_container"
         android:layout_width="120dp"
         android:layout_height="50dp"
-
         android:gravity="center">
 
         <TextView
             android:id="@+id/map_hit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="30dp"
+            tools:ignore="SpUsage"
             tools:text="1234" />
     </LinearLayout>
-
 </RelativeLayout>

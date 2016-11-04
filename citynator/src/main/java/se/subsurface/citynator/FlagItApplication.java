@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Build;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -37,7 +39,6 @@ public class FlagItApplication extends Application {
     public FlagMatch match;
     public CityDatabase db;
     private SharedPreferences prefs;
-    private SoundPool sp;
     private int soundSuccessId = 0;
     private int soundMissId = 0;
     private int soundAlmostId = 0;
@@ -177,31 +178,44 @@ public class FlagItApplication extends Application {
 
     }
 
+    private SoundPool mSounds;
+
     private void initSounds(Context context) {
-        sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            mSounds = new SoundPool.Builder()
+                    .setAudioAttributes(attributes)
+                    .build();
+        } else {
+            //noinspection deprecation
+            mSounds = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        }
 
         /** soundId for Later handling of sound pool **/
-        soundSuccessId = sp.load(context, R.raw.correct, 1);
-        soundMissId = sp.load(context, R.raw.miss, 1);
-        soundAlmostId = sp.load(context, R.raw.close, 1);
-        soundTimeoutId = sp.load(context, R.raw.disconnected, 1);
+        soundSuccessId = mSounds.load(context, R.raw.correct, 1);
+        soundMissId = mSounds.load(context, R.raw.miss, 1);
+        soundAlmostId = mSounds.load(context, R.raw.close, 1);
+        soundTimeoutId = mSounds.load(context, R.raw.disconnected, 1);
 
 
     }
 
     public void playSuccess() {
-        sp.play(soundSuccessId, 1, 1, 0, 0, 1);
+        mSounds.play(soundSuccessId, 1, 1, 0, 0, 1);
     }
 
-    public void playMIss() {
-        sp.play(soundMissId, 1, 1, 0, 0, 1);
+    public void playMiss() {
+        mSounds.play(soundMissId, 1, 1, 0, 0, 1);
     }
 
     public void playAlmost() {
-        sp.play(soundAlmostId, 1, 1, 0, 0, 1);
+        mSounds.play(soundAlmostId, 1, 1, 0, 0, 1);
     }
 
     public void playTimeout() {
-        sp.play(soundTimeoutId, 1, 1, 0, 0, 1);
+        mSounds.play(soundTimeoutId, 1, 1, 0, 0, 1);
     }
 }

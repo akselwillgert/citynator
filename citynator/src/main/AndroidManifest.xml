@@ -38,8 +38,7 @@
             tools:replace="android:theme" />
         <activity
             android:name="se.subsurface.citynator.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:noHistory="true" />
+            android:label="@string/title_activity_maps" />
         <activity
             android:name="se.subsurface.citynator.MatchResultActivity"
             android:label="@string/title_activity_match_result" />
