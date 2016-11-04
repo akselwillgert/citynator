@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
@@ -35,6 +37,11 @@ public class FlagItApplication extends Application {
     public FlagMatch match;
     public CityDatabase db;
     private SharedPreferences prefs;
+    private SoundPool sp;
+    private int soundSuccessId = 0;
+    private int soundMissId = 0;
+    private int soundAlmostId = 0;
+    private int soundTimeoutId = 0;
 
     public static FlagItApplication getInstance() {
         if (INSTANCE == null)
@@ -118,7 +125,7 @@ public class FlagItApplication extends Application {
         db = new CityDatabase(this);
 
         initCountryCodeMap();
-
+        initSounds(this);
 
         Log.d(TAG, "onCreate return");
     }
@@ -126,7 +133,6 @@ public class FlagItApplication extends Application {
     private String popString(int popLimit) {
         return " AND population > " + popLimit;
     }
-
 
     public GameType getGameType(String name) {
         List<GameType> gameTypes = getCountries();
@@ -171,4 +177,31 @@ public class FlagItApplication extends Application {
 
     }
 
+    private void initSounds(Context context) {
+        sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+
+        /** soundId for Later handling of sound pool **/
+        soundSuccessId = sp.load(context, R.raw.correct, 1);
+        soundMissId = sp.load(context, R.raw.miss, 1);
+        soundAlmostId = sp.load(context, R.raw.close, 1);
+        soundTimeoutId = sp.load(context, R.raw.disconnected, 1);
+
+
+    }
+
+    public void playSuccess() {
+        sp.play(soundSuccessId, 1, 1, 0, 0, 1);
+    }
+
+    public void playMIss() {
+        sp.play(soundMissId, 1, 1, 0, 0, 1);
+    }
+
+    public void playAlmost() {
+        sp.play(soundAlmostId, 1, 1, 0, 0, 1);
+    }
+
+    public void playTimeout() {
+        sp.play(soundTimeoutId, 1, 1, 0, 0, 1);
+    }
 }

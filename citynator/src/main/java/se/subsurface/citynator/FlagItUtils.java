@@ -179,7 +179,7 @@ public abstract class FlagItUtils {
         drawPoly(roundResult, mMap, context, false);
     }
 
-    public static LinearLayout getMarkerView(String text, boolean below, boolean live, int color, Context context) {
+    private static LinearLayout getMarkerView(String text, boolean below, boolean live, int color, Context context) {
         @SuppressLint("InflateParams")//ignoring nullparent here, as view is used for creating bitmap
                 LinearLayout cityView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.city_marker, null);
         TextView cityNameBelowTV = (TextView) cityView.findViewById(R.id.city_name_below);
@@ -197,7 +197,9 @@ public abstract class FlagItUtils {
                 cityNameBelowTV.setTextAppearance(R.style.city_marker_big);
                 cityNameAboveTV.setTextAppearance(R.style.city_marker_big);
             } else {
+                //noinspection deprecation
                 cityNameAboveTV.setTextAppearance(context, R.style.city_marker_big);
+                //noinspection deprecation
                 cityNameBelowTV.setTextAppearance(context, R.style.city_marker_big);
             }
 

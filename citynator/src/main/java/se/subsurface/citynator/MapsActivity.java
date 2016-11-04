@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     private static final String PRE_ROUND = "PreRound";
     private static final String TIMER = "Timer";
     private static final String BOUNDS = "Bounds";
-    int indicatorWidth;
+    private int indicatorWidth;
     private GameType gameType;
     //Views
     private ImageView mFlagView;
@@ -160,8 +160,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
 
 
             RoundResult result = mMatch.roundCompleted(click, mGameTimer.timeEllapsed);
-            int accuracyColor = FlagItUtils.getAccuracyColor(this, result.accuracy);
 
+            gfxAndSound(result.accuracy);
+
+            //Draw the result
+            int accuracyColor = FlagItUtils.getAccuracyColor(this, result.accuracy);
             String distance = FlagItUtils.round(result.distance, 0);
             map_hit.setVisibility(View.VISIBLE);
             map_hit.setTextColor(accuracyColor);
@@ -175,6 +178,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
                 params.topMargin = (int) mMotionEvent.getY() - FlagItUtils.getStatusBarHeight(this);
             }
 
+            //Center in parent is for timeout
             params.addRule(RelativeLayout.CENTER_IN_PARENT, 0);
 
             map_hit_container.setLayoutParams(params);
@@ -182,34 +186,43 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             YoYo.with(Techniques.Landing)
                     .duration(3000)
                     .playOn(map_hit);
-
             FlagItUtils.drawPoly(result, mMap, this, true);
-            int particleSize = 0;
-            switch (result.accuracy) {
-                case RED:
-                    particleSize = 100;
-                    break;
-                case ORANGE:
-                    particleSize = 30;
-                    break;
-                case YELLOW:
-                    particleSize = 20;
-                    break;
-                case BLACK:
-                    Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake2);
-                    mapOverlay.startAnimation(shake);
-                    break;
-            }
 
-            //Draw the explosion
-            if (mMotionEvent != null) {
-                new ParticleSystem(this, particleSize, R.drawable.star_white, 800)
-                        .setSpeedRange(0.1f, 0.25f)
-                        .emit((int) mMotionEvent.getX(), (int) mMotionEvent.getY(), 1000, 100);
-            }
+
             mGameTimer.cancel();
 
             nextRound();
+        }
+    }
+
+    private void gfxAndSound(RoundResult.Accuracy accuracy) {
+        int particleSize = 0;
+
+        switch (accuracy) {
+            case RED:
+                particleSize = 140;
+                FlagItApplication.getInstance().playSuccess();
+                break;
+            case ORANGE:
+                particleSize = 40;
+                FlagItApplication.getInstance().playAlmost();
+                break;
+            case YELLOW:
+                particleSize = 10;
+                FlagItApplication.getInstance().playAlmost();
+                break;
+            case BLACK:
+                Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake2);
+                mapOverlay.startAnimation(shake);
+                FlagItApplication.getInstance().playMIss();
+                break;
+        }
+
+        //Draw the explosion
+        if (mMotionEvent != null) {
+            new ParticleSystem(this, particleSize, R.drawable.star_white, 800)
+                    .setSpeedRange(0.1f, 0.25f)
+                    .emit((int) mMotionEvent.getX(), (int) mMotionEvent.getY(), 1000, 100);
         }
     }
 
@@ -307,6 +320,11 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "onPause");
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -461,6 +479,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
             } else {
                 //No click in time, report timeout result
                 RoundResult result = mMatch.roundTimeout();
+                FlagItApplication.getInstance().playTimeout();
                 map_hit.setVisibility(View.VISIBLE);
                 map_hit.setTextColor(FlagItUtils.getAccuracyColor(MapsActivity.this, RoundResult.Accuracy.TIME_OUT));
                 map_hit.setText("Timeout");
