@@ -1,7 +1,6 @@
 package se.subsurface.citynator;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.FragmentActivity;
@@ -24,8 +23,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.plattysoft.leonids.ParticleSystem;
 
 import de.greenrobot.event.EventBus;
@@ -239,31 +236,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMapCli
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         googleMap.setOnMapClickListener(this);
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            public boolean onMarkerClick(Marker marker) {
-                //disable marker center click
-                return true;
-            }
-        });
-        try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.mapstyle));
-
-            if (!success) {
-                Log.e("MapsActivityRaw", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("MapsActivityRaw", "Can't find style.", e);
-        }
-        //googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        // To Disable Zoom you can do2 the following.
-        googleMap.getUiSettings().setScrollGesturesEnabled(false);
-        googleMap.getUiSettings().setZoomControlsEnabled(false);
-        googleMap.getUiSettings().setZoomGesturesEnabled(false);
-        googleMap.getUiSettings().setRotateGesturesEnabled(false);
+        FlagItUtils.configureMap(googleMap, this);
         resumeMatch();
     }
 
