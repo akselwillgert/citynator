@@ -43,6 +43,7 @@ public class FlagItApplication extends Application {
     private int soundMissId = 0;
     private int soundAlmostId = 0;
     private int soundTimeoutId = 0;
+    private SoundPool mSounds;
 
     public static FlagItApplication getInstance() {
         if (INSTANCE == null)
@@ -178,8 +179,6 @@ public class FlagItApplication extends Application {
 
     }
 
-    private SoundPool mSounds;
-
     private void initSounds(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes attributes = new AudioAttributes.Builder()
@@ -199,8 +198,6 @@ public class FlagItApplication extends Application {
         soundMissId = mSounds.load(context, R.raw.miss, 1);
         soundAlmostId = mSounds.load(context, R.raw.close, 1);
         soundTimeoutId = mSounds.load(context, R.raw.disconnected, 1);
-
-
     }
 
     public void playSuccess() {
